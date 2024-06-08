@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.examen.presentation.MainFragment"
+        android:label="MainFragment">
+        <action
+            android:id="@+id/action_mainFragment_to_capturePhotoFragment"
+            app:destination="@id/capturePhotoFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_galleryFragment"
+            app:destination="@id/galleryFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_productListFragment"
+            app:destination="@id/productListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/capturePhotoFragment"
+        android:name="com.example.examen.presentation.CapturePhotoFragment"
+        android:label="CapturePhotoFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/galleryFragment"
+        android:name="com.example.examen.presentation.GalleryFragment"
+        android:label="GalleryFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/productListFragment"
+        android:name="com.example.examen.presentation.ProductListFragment"
+        android:label="ProductListFragment">
+        <!-- Define aquí las transiciones de retorno -->
+    </fragment>
+
+</navigation>
