@@ -5,56 +5,60 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.examen.R
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import android.content.Context
+import com.example.examen.MyApp
+import com.example.examen.databinding.FragmentGalleryBinding
+import org.json.JSONArray
+import org.json.JSONObject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [GalleryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class GalleryFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentGalleryBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gallery, container, false)
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGalleryBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        // Configurar RecyclerView con un GridLayoutManager
+        val recyclerView: RecyclerView = binding.recyclerViewGallery
+        recyclerView.layoutManager = GridLayoutManager(context, 3) // 3 columnas en la cuadrícula
+
+        val barcodeList = getScannedBarcodes()
+        recyclerView.adapter = GalleryAdapter(barcodeList)
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun getScannedBarcodes(): List<BarcodeItem> {
+        val sharedPreferences = requireActivity().getSharedPreferences(MyApp.PREFS_NAME, Context.MODE_PRIVATE)
+        val barcodeList = sharedPreferences.getString(KEY_SCANNED_BARCODES, "[]")
+        val jsonArray = JSONArray(barcodeList)
+
+        val items = mutableListOf<BarcodeItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val barcode = jsonObject.getString("barcode")
+            val date = jsonObject.getString("date")
+            val image = jsonObject.getString("image")
+            items.add(BarcodeItem(barcode, date,image))
+        }
+
+        return items
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment GalleryFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            GalleryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        private const val KEY_SCANNED_BARCODES = "scanned_barcodes"
     }
 }
+
+data class BarcodeItem(val barcode: String, val date: String,val image: String)

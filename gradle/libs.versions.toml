@@ -41,7 +41,7 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 glide = {group = "com.github.bumptech.glide", name = "glide" , version.ref ="glide"}
 
 zxing= { group = "com.google.zxing", name = "core", version = "3.4.1"}
-zxingJourney= {group = "com.journeyapps", name= "zxing-android-embedded", version = "4.2.0"}
+zxingJourney= {group = "com.journeyapps", name= "zxing-android-embedded", version = "4.3.0"}
 
 
 [plugins]

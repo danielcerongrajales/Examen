@@ -10,7 +10,11 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.examen.MyApp
 import com.example.examen.databinding.FragmentProductListBinding
+import com.example.examen.presentation.CapturePhotoFragment.Companion.KEY_SCANNED_BARCODES
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONArray
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment() {
@@ -44,9 +48,30 @@ class ProductListFragment : Fragment() {
     }
 
     private fun getScannedBarcode(): String {
-        val sharedPreferences =
-            requireActivity().getSharedPreferences(MyApp.PREFS_NAME, Context.MODE_PRIVATE)
-        return sharedPreferences.getString(KEY_SCANNED_BARCODE, "") ?: ""
+            val sharedPreferences = requireActivity().getSharedPreferences(MyApp.PREFS_NAME, Context.MODE_PRIVATE)
+            val barcodeList = sharedPreferences.getString(KEY_SCANNED_BARCODES, "[]")
+            val jsonArray = JSONArray(barcodeList)
+
+            var mostRecentBarcodeItem = ""
+            var mostRecentDate: Long = 0
+
+            for (i in 0 until jsonArray.length()) {
+                val jsonObject = jsonArray.getJSONObject(i)
+                val dateString = jsonObject.getString("date")
+                val barcode = jsonObject.getString("barcode")
+
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                val date = dateFormat.parse(dateString)?.time ?: 0
+
+                if (date > mostRecentDate) {
+                    mostRecentBarcodeItem = barcode
+                    mostRecentDate = date
+                }
+            }
+
+           return mostRecentBarcodeItem
+
+
     }
 
     override fun onDestroyView() {
